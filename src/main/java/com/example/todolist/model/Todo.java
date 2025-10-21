@@ -1,8 +1,7 @@
 package com.example.todolist.model;
 
 import jakarta.persistence.*;
-
-import java.lang.annotation.Documented;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 
 @Entity
@@ -18,7 +17,10 @@ public class Todo {
     private String title;
 
     private String description;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate deadline;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
 
     @PrePersist
@@ -68,5 +70,16 @@ public class Todo {
     public LocalDate getCreatedAt()
     {
         return createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Todo{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", deadline=" + deadline +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

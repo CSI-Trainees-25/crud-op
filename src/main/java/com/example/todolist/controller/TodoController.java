@@ -2,8 +2,11 @@ package com.example.todolist.controller;
 
 import com.example.todolist.model.Todo;
 import com.example.todolist.service.TodoService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -12,16 +15,17 @@ import java.util.List;
 public class TodoController {
 
     private final TodoService todoService;
+    private static final Logger logger = LoggerFactory.getLogger(TodoController.class);
 
     public TodoController(TodoService todoService)
     {
         this.todoService = todoService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Todo> create(@RequestBody Todo todo)
     {
-        System.out.println("todo success"+ todo);
+        logger.info("Create TODO request received: {}", todo);
         return ResponseEntity.ok(todoService.create(todo));
 
     }
