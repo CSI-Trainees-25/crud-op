@@ -1,0 +1,55 @@
+package com.example.todolist.controller;
+
+import com.example.todolist.model.Todo;
+import com.example.todolist.service.TodoService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/todos")
+public class TodoController {
+
+    private final TodoService todoService;
+
+    public TodoController(TodoService todoService)
+    {
+        this.todoService = todoService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Todo> create(@RequestBody Todo todo)
+    {
+        System.out.println("todo success"+ todo);
+        return ResponseEntity.ok(todoService.create(todo));
+
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Todo>> getAll()
+    {
+        return ResponseEntity.ok(todoService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Todo> getById(@PathVariable Long id)
+    {
+        Todo todo = todoService.getById(id);
+        return todo != null ? ResponseEntity.ok(todo) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Todo> update(@PathVariable Long id, @RequestBody Todo updatedTodo)
+    {
+        Todo todo = todoService.update(id, updatedTodo);
+        return todo != null ? ResponseEntity.ok(todo) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id)
+    {
+        todoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}
