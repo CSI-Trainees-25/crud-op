@@ -1,21 +1,38 @@
-# Step 1: Build stage
+
+# ================================
+# Stage 1: Build the application
+# ================================
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copy project files
+# Copy Maven configuration first (better layer caching)
 COPY pom.xml .
+
+# Download dependencies (cached unless pom.xml changes)
+RUN mvn dependency:go-offline
+
+# Copy the entire project
 COPY src ./src
 
-# Build the application (skip tests to speed up)
-RUN mvn clean package -DskipTests
+# Build the JAR file
+RUN mvn -B clean package -DskipTests
 
-# Step 2: Run stage
+
+# ================================
+# Stage 2: Create the runtime image
+# ================================
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-# Copy the built jar from builder stage
+# Copy the built JAR from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
+# Set Render PORT environment default
+ENV PORT=8080
+
+# Expose port
 EXPOSE 8080
 
+# Start the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
